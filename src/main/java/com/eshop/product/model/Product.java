@@ -1,10 +1,12 @@
 package com.eshop.product.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -21,10 +23,11 @@ public class Product implements Serializable {
 
     private String name;
     private String description;
-    private double currentPrice;
-    private boolean promotion;
-    private boolean available;
-    private String photoName;
+    private double Price;
+    private String Image;
+    private Date created_at;
+    @Nullable
+    private Date update_at;
 
     @Transient
     private int quantity = 1;
