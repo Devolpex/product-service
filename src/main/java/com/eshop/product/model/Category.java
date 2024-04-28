@@ -1,10 +1,12 @@
 package com.eshop.product.model;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -17,8 +19,10 @@ public class Category implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String photo;
     private String description;
+    private Date created_at;
+    @Nullable
+    private Date update_at;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private Collection<Product> products;
