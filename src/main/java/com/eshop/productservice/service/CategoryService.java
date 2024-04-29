@@ -1,14 +1,11 @@
 package com.eshop.productservice.service;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.eshop.productservice.Exception.CategoryNotFoundException;
 import com.eshop.productservice.model.Category;
 import com.eshop.productservice.repository.CategoryRepository;
-
 import java.util.Date;
 import java.util.List;
 
@@ -18,8 +15,10 @@ public class CategoryService {
     @Autowired
     private final CategoryRepository categoryRepository;
 
+
     public void saveCategory(Category category){
         // Save Category data
+
         categoryRepository.save(category);
     }
     public boolean nameExists(String name){
@@ -35,6 +34,7 @@ public class CategoryService {
         }
         categoryRepository.deleteById(id);
     }
+
 
     public Category findCategorytById(Long id) {
         Category category = categoryRepository.findById(id).orElse(null);
@@ -55,4 +55,5 @@ public class CategoryService {
                 updated_category.setUpdate_at(new Date());
         categoryRepository.save(updated_category);
     }
+
 }

@@ -1,4 +1,5 @@
 package com.eshop.productservice.controller;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,17 +9,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.eshop.productservice.Exception.CategoryNotFoundException;
-import com.eshop.productservice.Request.category.*;
+import com.eshop.productservice.request.category.*;
 import com.eshop.productservice.Response.category.*;
 import com.eshop.productservice.model.Category;
 import com.eshop.productservice.service.CategoryService;
 
 import java.util.*;
+
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
+
+@CrossOrigin(origins = "http://localhost:3001")
 public class CategoryController {
     @Autowired
 
@@ -26,6 +30,7 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+
     //@CrossOrigin(origins = "http://localhost:8070")
     public ResponseEntity<CategoryCreateResponse> createCategory(@RequestBody @Valid CategoryCreateRequest categoryCreateRequest, BindingResult bindingResult){
 
@@ -83,12 +88,15 @@ public class CategoryController {
     }
 
     @GetMapping
+
     public List<Category> getAllCategories() {
         return categoryService.findAllCategories();
     }
 
     @DeleteMapping("/{id}")
+
     public ResponseEntity<?> deleteCategory(@PathVariable long id){
+
         categoryService.deleteCategoryById(id);
         Map<String,String> successMessage = new HashMap<>();
         successMessage.put("Deleted","Category Deleted successfuly");

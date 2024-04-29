@@ -1,4 +1,4 @@
-package com.eshop.productservice.Request.category;
+package com.eshop.productservice.request.category;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -9,7 +9,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryCreateRequest {
+public class CategoryUpdateRequest {
     @Pattern(regexp = "[a-zA-Z]+", message = "Category Name must contain only alphabetic characters")
     @NotBlank(message = "Category Name can not be empty")
     private String name;
