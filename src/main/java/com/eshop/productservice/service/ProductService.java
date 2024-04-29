@@ -1,13 +1,18 @@
 package com.eshop.productservice.service;
 
 
+import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.model.Category;
 import com.eshop.productservice.model.Product;
+import com.eshop.productservice.repository.CategoryRepository;
 import com.eshop.productservice.repository.ProductRepository;
 import com.eshop.productservice.request.product.ProductCreateRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -22,6 +27,7 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
 
 
@@ -59,8 +65,27 @@ public class ProductService {
         product.setPrice(request.getPrice());
         product.setImage(request.getImage());
         product.setCreated_at(new Date());
-
+        Optional<Category> category = categoryRepository.findById(request.getCategoryId());
+        category.ifPresent(product::setCategory);
         return product;
+    }
+    private ProductDto convertToDto(Product product) {
+        ProductDto dto = new ProductDto();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setImage(product.getImage());
+        if (product.getCategory() != null) {
+            dto.setCategoryName(product.getCategory().getName());
+        }
+        return dto;
+    }
+    //search product by name
+
+    public Page<ProductDto> searchProducts(String search, Pageable pageable) {
+        Page<Product> products = productRepository.findByProductNameOrCategoryName(search, pageable);
+        return products.map(this::convertToDto);
     }
 
 }
