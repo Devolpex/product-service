@@ -1,4 +1,4 @@
-package com.eshop.product.model;
+package com.eshop.productservice.model;
 
 import jakarta.persistence.*;
 import jakarta.persistence.*;

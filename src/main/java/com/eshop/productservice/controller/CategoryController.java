@@ -1,9 +1,5 @@
-package com.eshop.product.controller;
+package com.eshop.productservice.controller;
 
-import com.eshop.product.DTO.CategoryCreateDto;
-import com.eshop.product.Exception.CategoryNotFoundException;
-import com.eshop.product.model.Category;
-import com.eshop.product.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import com.eshop.productservice.DTO.CategoryCreateDto;
+import com.eshop.productservice.Exception.CategoryNotFoundException;
+import com.eshop.productservice.model.Category;
+import com.eshop.productservice.service.CategoryService;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3001")
 public class CategoryController {
     @Autowired
 
@@ -28,7 +30,7 @@ public class CategoryController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @CrossOrigin(origins = "http://localhost:8070")
+    @CrossOrigin(origins = "http://localhost:3001")
     public ResponseEntity<?> createCategory(@RequestBody @Valid CategoryCreateDto categoryCreateDto, BindingResult bindingResult){
         Map<String, Object> errorsResponse = new HashMap<>();
         List<String> validationsErrors = new ArrayList<>();
