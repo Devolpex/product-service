@@ -1,4 +1,4 @@
-package com.eshop.product.Exception;
+package com.eshop.productservice.Exception;
 
 public class CategoryNotFoundException extends RuntimeException {
     public CategoryNotFoundException(Long id) {

@@ -9,7 +9,7 @@ server:
   port: 8070
 spring:
   application:
-    name: product
+    name: product-service
   config:
     import: optional:configserver:http://localhost:8888
   datasource:
@@ -19,6 +19,6 @@ spring:
     password: Marouane@2001
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
