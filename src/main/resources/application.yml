@@ -1,3 +1,9 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8765/eureka/
 server:
   port: 8070
 spring:

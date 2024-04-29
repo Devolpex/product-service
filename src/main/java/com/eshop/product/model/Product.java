@@ -3,6 +3,7 @@ package com.eshop.product.model;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serializable;
@@ -20,7 +21,7 @@ public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @NotBlank(message = "Name is mandatory")
     private String name;
     private String description;
     private double Price;

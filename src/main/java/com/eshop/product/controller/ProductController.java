@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,14 +28,16 @@ public class ProductController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody @Valid ProductCreateRequest request,
                                                                BindingResult bindingResult) {
+        List<String> errors = new ArrayList<>();
         if (bindingResult.hasErrors()) {
-            List<String> errors = bindingResult.getFieldErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+            errors = bindingResult.getAllErrors().stream().map(error -> error.getDefaultMessage())
                     .collect(Collectors.toList());
-            return ResponseEntity.badRequest().body(ProductCreateResponse.builder()
-                    .success("Failure")
-                    .errors(errors)
-                    .build());
+        }
+        if(productService.productExist(request.getName())){
+            errors.add("Product already exists");
+        }
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ProductCreateResponse.builder().errors(errors).build());
         }
 
         productService.saveProduct(request);
