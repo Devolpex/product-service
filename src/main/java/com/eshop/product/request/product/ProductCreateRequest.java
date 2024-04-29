@@ -1,5 +1,6 @@
 package com.eshop.product.request.product;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ public class ProductCreateRequest {
 
     // Image should be a string but there's no need for specific validation unless you require something specific like format checking
     private String image;
-
+    @NotNull(message = "Category ID is required")
+    private Long categoryId;
 
 }

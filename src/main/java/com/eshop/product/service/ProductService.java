@@ -20,10 +20,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-//    @Autowired
-//    public ProductService(ProductRepository productRepository) {
-//        this.productRepository = productRepository;
-//    }
+
 
     public void saveProduct(ProductCreateRequest productRequest) {
         Product product = convertRequestToEntity(productRequest);
@@ -59,6 +56,7 @@ public class ProductService {
         product.setPrice(request.getPrice());
         product.setImage(request.getImage());
         product.setCreated_at(new Date());
+
         return product;
     }
 }
