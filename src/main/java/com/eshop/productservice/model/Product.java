@@ -1,10 +1,13 @@
 package com.eshop.productservice.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -18,13 +21,14 @@ public class Product implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
+    @NotBlank(message = "Name is mandatory")
     private String name;
     private String description;
-    private double currentPrice;
-    private boolean promotion;
-    private boolean available;
-    private String photoName;
+    private double Price;
+    private String Image;
+    private Date created_at;
+    @Nullable
+    private Date update_at;
 
     @Transient
     private int quantity = 1;
