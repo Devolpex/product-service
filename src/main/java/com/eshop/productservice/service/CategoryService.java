@@ -1,12 +1,13 @@
-package com.eshop.product.service;
+package com.eshop.productservice.service;
 
 
-import com.eshop.product.Exception.CategoryNotFoundException;
-import com.eshop.product.model.Category;
-import com.eshop.product.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.eshop.productservice.Exception.CategoryNotFoundException;
+import com.eshop.productservice.model.Category;
+import com.eshop.productservice.repository.CategoryRepository;
 
 import java.util.Date;
 import java.util.List;

@@ -1,9 +1,4 @@
-package com.eshop.product.controller;
-import com.eshop.product.Request.category.*;
-import com.eshop.product.Response.category.*;
-import com.eshop.product.Exception.CategoryNotFoundException;
-import com.eshop.product.model.Category;
-import com.eshop.product.service.CategoryService;
+package com.eshop.productservice.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import com.eshop.productservice.Exception.CategoryNotFoundException;
+import com.eshop.productservice.Request.category.*;
+import com.eshop.productservice.Response.category.*;
+import com.eshop.productservice.model.Category;
+import com.eshop.productservice.service.CategoryService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class CategoryController {
                 .build());
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<Category> getAllCategories() {
         return categoryService.findAllCategories();
     }

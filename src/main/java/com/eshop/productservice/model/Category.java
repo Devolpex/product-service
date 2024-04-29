@@ -1,4 +1,4 @@
-package com.eshop.product.model;
+package com.eshop.productservice.model;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;

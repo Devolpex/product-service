@@ -1,11 +1,12 @@
-package com.eshop.product.controller;
+package com.eshop.productservice.controller;
 
-import com.eshop.product.model.Product;
-import com.eshop.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.eshop.productservice.model.Product;
+import com.eshop.productservice.service.ProductService;
 
 import java.util.List;
 

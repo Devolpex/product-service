@@ -1,4 +1,4 @@
-package com.eshop.product.Request.category;
+package com.eshop.productservice.Request.category;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
