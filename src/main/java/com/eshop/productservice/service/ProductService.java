@@ -8,6 +8,7 @@ import com.eshop.productservice.repository.CategoryRepository;
 import com.eshop.productservice.repository.ProductRepository;
 import com.eshop.productservice.request.product.ProductCreateRequest;
 
+import com.eshop.productservice.request.product.ProductUpdateRequest;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,4 +94,23 @@ public class ProductService {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(this::convertToDto);
     }
+
+    public Optional<Product> updateProduct(Long id, ProductUpdateRequest request) {
+        return productRepository.findById(id).map(product -> {
+            product.setName(request.getName());
+            product.setDescription(request.getDescription());
+            product.setPrice(request.getPrice());
+            product.setImage(request.getImage());
+            product.setQuantity(request.getQuantity());
+            product.setUpdate_at(new Date());
+
+
+            categoryRepository.findById(request.getCategoryId())
+                    .ifPresent(product::setCategory);
+
+            return productRepository.save(product);
+        });
+    }
+
+
 }
