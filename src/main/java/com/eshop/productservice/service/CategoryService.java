@@ -18,7 +18,6 @@ public class CategoryService {
 
     public void saveCategory(Category category){
         // Save Category data
-
         categoryRepository.save(category);
     }
     public boolean nameExists(String name){

@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoryCreateRequest {
-    @Pattern(regexp = "[a-zA-Z]+", message = "Category Name must contain only alphabetic characters")
+    @Pattern(regexp = "[a-zA-Z ]+$", message = "Category Name must contain only alphabetic characters")
     @NotBlank(message = "Category Name can not be empty")
     private String name;
     @NotBlank(message = "Description cannot be empty")
