@@ -4,6 +4,8 @@ package com.eshop.productservice.controller;
 
 import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.reponse.product.ProductPageResponse;
+import com.eshop.productservice.reponse.product.ProductUpdateResponse;
+import com.eshop.productservice.request.product.ProductUpdateRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -79,7 +81,7 @@ public class ProductController {
 
     @GetMapping("/search")
 
-    public ResponseEntity<Page<ProductDto>> searchClients(
+    public ResponseEntity<Page<ProductDto>> searchProducts(
             @RequestParam String search,
             @RequestParam(defaultValue = "1") int page) {
         int size = 5;
@@ -102,6 +104,34 @@ public class ProductController {
                 .products(productPage.getContent())
                 .currentPage(productPage.getNumber() + 1)
                 .totalPages(productPage.getTotalPages())
+                .build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductUpdateResponse> updateProduct(@PathVariable Long id,
+                                                               @RequestBody @Valid ProductUpdateRequest request, BindingResult bindingResult) {
+        List<String> errors = new ArrayList<>();
+        Product product = productService.findProductById(id).orElse(null);
+
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ProductUpdateResponse.builder()
+                    .errors(Collections.singletonList("Product not found")).build());
+        }
+
+        if (bindingResult.hasErrors()) {
+            errors = bindingResult.getAllErrors().stream().map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+        }
+
+        if (!errors.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProductUpdateResponse.builder().errors(errors).build());
+        }
+
+
+        productService.updateProduct(id, request);
+        return ResponseEntity.ok(ProductUpdateResponse.builder()
+                .success("Product updated successfully")
+                .redirectTo("/products")
                 .build());
     }
 }
