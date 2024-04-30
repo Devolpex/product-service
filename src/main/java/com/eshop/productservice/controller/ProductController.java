@@ -3,6 +3,7 @@ package com.eshop.productservice.controller;
 
 
 import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.reponse.product.ProductPageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -86,9 +87,22 @@ public class ProductController {
         Page<ProductDto> productDtoPage = productService.searchProducts(search, pageable);
         return ResponseEntity.ok(productDtoPage);
     }
-    @GetMapping("/")
-    public List<Product> getAllProducts() {
-        return productService.findAllProducts();
+
+//    @GetMapping("/")
+//    public List<Product> getAllProducts() {
+//        return productService.findAllProducts();
+//    }
+
+    @GetMapping
+    public ResponseEntity<ProductPageResponse> getProductByPagination(@RequestParam(defaultValue = "1") int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ProductDto> productPage = productService.getProductByPagination(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ProductPageResponse.builder()
+                .products(productPage.getContent())
+                .currentPage(productPage.getNumber() + 1)
+                .totalPages(productPage.getTotalPages())
+                .build());
     }
 }
 

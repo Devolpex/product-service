@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     boolean existsProductByName(String name);
     Product findProductByName(String name);
 
-
+    Page<Product> findAll(Pageable pageable);
     @Query("SELECT p FROM Product p JOIN p.category c WHERE " +
             "LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))")

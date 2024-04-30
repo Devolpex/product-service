@@ -88,4 +88,9 @@ public class ProductService {
         return products.map(this::convertToDto);
     }
 
+
+    public Page<ProductDto> getProductByPagination(Pageable pageable) {
+        Page<Product> products = productRepository.findAll(pageable);
+        return products.map(this::convertToDto);
+    }
 }
