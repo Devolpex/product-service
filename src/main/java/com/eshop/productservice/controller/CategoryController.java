@@ -83,7 +83,7 @@ public class CategoryController {
         categoryService.updateCategory(id, category);
         return ResponseEntity.ok(CategoryUpdateResponse.builder()
                 .success("Category updated successfully")
-                .redirectTo("/clients")
+                .redirectTo("/categories")
                 .build());
     }
 
@@ -98,9 +98,10 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategory(@PathVariable long id){
 
         categoryService.deleteCategoryById(id);
-        Map<String,String> successMessage = new HashMap<>();
-        successMessage.put("Deleted","Category Deleted successfuly");
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(CategoryUpdateResponse.builder()
+                .success("Category deleted successfully")
+                .redirectTo("/categories")
+                .build());
     }
     //Handle the Custom Exception if id Non-Existent
     @ControllerAdvice
