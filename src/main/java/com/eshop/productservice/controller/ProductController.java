@@ -2,8 +2,12 @@ package com.eshop.productservice.controller;
 
 
 
+import com.eshop.productservice.dto.product.ProductDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -72,8 +76,16 @@ public class ProductController {
                 .build());
     }
 
+    @GetMapping("/search")
 
-
+    public ResponseEntity<Page<ProductDto>> searchClients(
+            @RequestParam String search,
+            @RequestParam(defaultValue = "1") int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ProductDto> productDtoPage = productService.searchProducts(search, pageable);
+        return ResponseEntity.ok(productDtoPage);
+    }
     @GetMapping("/")
     public List<Product> getAllProducts() {
         return productService.findAllProducts();
