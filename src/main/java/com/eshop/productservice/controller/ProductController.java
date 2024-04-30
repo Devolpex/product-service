@@ -6,6 +6,7 @@ import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.reponse.product.ProductPageResponse;
 import com.eshop.productservice.reponse.product.ProductUpdateResponse;
 import com.eshop.productservice.request.product.ProductUpdateRequest;
+import com.eshop.productservice.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+    private final CategoryService categoryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -48,6 +50,10 @@ public class ProductController {
         if(productService.productExist(request.getName())){
             errors.add("Product already exists");
         }
+        // Check if the category exists
+//        if (!categoryService.categoryExists(request.getCategoryId())) {
+//            errors.add("Category not found");
+//        }
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(ProductCreateResponse.builder().errors(errors).build());
         }
@@ -123,10 +129,13 @@ public class ProductController {
                     .collect(Collectors.toList());
         }
 
+//        if (!productService.categoryExists(request.getCategoryId())) {
+//            errors.add("Category not found");
+//        }
+
         if (!errors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProductUpdateResponse.builder().errors(errors).build());
         }
-
 
         productService.updateProduct(id, request);
         return ResponseEntity.ok(ProductUpdateResponse.builder()
