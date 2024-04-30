@@ -1,7 +1,12 @@
 package com.eshop.productservice.service;
 
+import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.model.Product;
+import com.eshop.productservice.request.category.CategoryPageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.eshop.productservice.Exception.CategoryNotFoundException;
 import com.eshop.productservice.model.Category;
@@ -20,6 +25,11 @@ public class CategoryService {
         // Save Category data
         categoryRepository.save(category);
     }
+
+    public boolean categoryExists(long id){
+        return categoryRepository.existsById(id);
+    }
+
     public boolean nameExists(String name){
         return categoryRepository.existsByName(name);
     }
@@ -55,4 +65,18 @@ public class CategoryService {
         categoryRepository.save(updated_category);
     }
 
+    public Page<CategoryPageRequest> getCategoryByPagination(Pageable pageable) {
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+
+        return categoryPage.map(category -> {
+            CategoryPageRequest categoryPageRequest = new CategoryPageRequest();
+            // Map fields from Category to CategoryPageRequest
+            categoryPageRequest.setId(category.getId());
+            categoryPageRequest.setName(category.getName());
+            categoryPageRequest.setDescription(category.getDescription());
+            // Map other fields as needed
+
+            return categoryPageRequest;
+        });
+    }
 }
