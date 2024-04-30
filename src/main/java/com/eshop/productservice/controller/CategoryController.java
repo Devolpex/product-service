@@ -1,8 +1,13 @@
 package com.eshop.productservice.controller;
 
+import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.reponse.product.ProductPageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -79,7 +84,6 @@ public class CategoryController {
 
         category.setName(categoryUpdateRequest.getName());
         category.setDescription(categoryUpdateRequest.getDescription());
-        //category.setUpdate_at();
         categoryService.updateCategory(id, category);
         return ResponseEntity.ok(CategoryUpdateResponse.builder()
                 .success("Category updated successfully")
@@ -87,10 +91,21 @@ public class CategoryController {
                 .build());
     }
 
-    @GetMapping
+    //@GetMapping
+    //public List<Category> getAllCategories() {
+    //    return categoryService.findAllCategories();
+    //}
 
-    public List<Category> getAllCategories() {
-        return categoryService.findAllCategories();
+    @GetMapping
+    public ResponseEntity<CategoryPageResponse> getCategoryByPagination(@RequestParam(defaultValue = "1") int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<CategoryPageRequest> categoryPage = categoryService.getCategoryByPagination(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(CategoryPageResponse.builder()
+                .category(categoryPage.getContent())
+                .currentPage(categoryPage.getNumber() + 1)
+                .totalPages(categoryPage.getTotalPages())
+                .build());
     }
 
     @DeleteMapping("/{id}")
