@@ -28,16 +28,44 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
 
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = "http://localhost:5173")
 public class CategoryController {
     @Autowired
 
     private final CategoryService categoryService;
+    
+
+    @GetMapping
+    public ResponseEntity<CategoryPageResponse> getCategoryByPagination(@RequestParam(defaultValue = "1") int page) {
+        int size = 5;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<CategoryPageRequest> categoryPage = categoryService.getCategoryByPagination(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(CategoryPageResponse.builder()
+                .category(categoryPage.getContent())
+                .currentPage(categoryPage.getNumber() + 1)
+                .totalPages(categoryPage.getTotalPages())
+                .build());
+    }
+
+
+    @GetMapping("/{id}")
+    public  ResponseEntity<?> getCategoryById(@PathVariable long id){
+        Category category = categoryService.findCategorytById(id);
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CategoryUpdateResponse.builder()
+                    .errors(Collections.singletonList("Category not found")).build());
+        }
+        return ResponseEntity.ok(category);
+    }
+
+
+    @GetMapping("/all-categories")
+    public List<Category> getAllCategories() {
+        return categoryService.findAllCategories();
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-
-    //@CrossOrigin(origins = "http://localhost:8070")
     public ResponseEntity<CategoryCreateResponse> createCategory(@RequestBody @Valid CategoryCreateRequest categoryCreateRequest, BindingResult bindingResult){
 
         List<String> validationsErrors = new ArrayList<>();
@@ -66,6 +94,7 @@ public class CategoryController {
                 .redirectTo("/categories")
                 .build());
     }
+
     @PutMapping("/{id}")
     public ResponseEntity<CategoryUpdateResponse> updateCategory(@PathVariable Long id, @RequestBody @Valid CategoryUpdateRequest categoryUpdateRequest, BindingResult bindingResult){
 
@@ -89,23 +118,6 @@ public class CategoryController {
         return ResponseEntity.ok(CategoryUpdateResponse.builder()
                 .success("Category updated successfully")
                 .redirectTo("/categories")
-                .build());
-    }
-
-    //@GetMapping
-    //public List<Category> getAllCategories() {
-    //    return categoryService.findAllCategories();
-    //}
-
-    @GetMapping
-    public ResponseEntity<CategoryPageResponse> getCategoryByPagination(@RequestParam(defaultValue = "1") int page) {
-        int size = 5;
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<CategoryPageRequest> categoryPage = categoryService.getCategoryByPagination(pageable);
-        return ResponseEntity.status(HttpStatus.OK).body(CategoryPageResponse.builder()
-                .category(categoryPage.getContent())
-                .currentPage(categoryPage.getNumber() + 1)
-                .totalPages(categoryPage.getTotalPages())
                 .build());
     }
 
