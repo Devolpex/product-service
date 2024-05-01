@@ -1,7 +1,5 @@
 package com.eshop.productservice.controller;
 
-import com.eshop.productservice.dto.product.ProductDto;
-import com.eshop.productservice.reponse.product.ProductPageResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
 import com.eshop.productservice.Exception.CategoryNotFoundException;
 import com.eshop.productservice.request.category.*;
 import com.eshop.productservice.Response.category.*;
@@ -20,7 +17,6 @@ import com.eshop.productservice.model.Category;
 import com.eshop.productservice.service.CategoryService;
 
 import java.util.*;
-
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,12 +26,10 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3001")
 public class CategoryController {
     @Autowired
-
     private final CategoryService categoryService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-
     //@CrossOrigin(origins = "http://localhost:8070")
     public ResponseEntity<CategoryCreateResponse> createCategory(@RequestBody @Valid CategoryCreateRequest categoryCreateRequest, BindingResult bindingResult){
 
@@ -91,11 +85,6 @@ public class CategoryController {
                 .build());
     }
 
-    //@GetMapping
-    //public List<Category> getAllCategories() {
-    //    return categoryService.findAllCategories();
-    //}
-
     @GetMapping
     public ResponseEntity<CategoryPageResponse> getCategoryByPagination(@RequestParam(defaultValue = "1") int page) {
         int size = 5;
@@ -108,10 +97,25 @@ public class CategoryController {
                 .build());
     }
 
+    @GetMapping("/{id}")
+    public  ResponseEntity<?> getCategoryById(@PathVariable long id){
+        Category category = categoryService.findCategorytById(id);
+        if (category == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(CategoryUpdateResponse.builder()
+                    .errors(Collections.singletonList("Category not found")).build());
+        }
+        return ResponseEntity.ok(category);
+    }
+
+
+    @GetMapping("/all-categories")
+    public List<Category> getAllCategories() {
+        return categoryService.findAllCategories();
+    }
+
+
     @DeleteMapping("/{id}")
-
     public ResponseEntity<?> deleteCategory(@PathVariable long id){
-
         categoryService.deleteCategoryById(id);
         return ResponseEntity.ok(CategoryUpdateResponse.builder()
                 .success("Category deleted successfully")

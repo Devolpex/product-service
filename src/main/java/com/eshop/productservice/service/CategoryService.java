@@ -1,26 +1,23 @@
 package com.eshop.productservice.service;
 
-import com.eshop.productservice.dto.product.ProductDto;
-import com.eshop.productservice.model.Product;
 import com.eshop.productservice.request.category.CategoryPageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.eshop.productservice.Exception.CategoryNotFoundException;
 import com.eshop.productservice.model.Category;
 import com.eshop.productservice.repository.CategoryRepository;
-import java.util.Date;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
     @Autowired
     private final CategoryRepository categoryRepository;
-
-
     public void saveCategory(Category category){
         // Save Category data
         categoryRepository.save(category);
@@ -33,9 +30,8 @@ public class CategoryService {
     public boolean nameExists(String name){
         return categoryRepository.existsByName(name);
     }
-    public List<Category> findAllCategories() {
-        return categoryRepository.findAll();
-    }
+    public List <Category> findAllCategories() {
+         return categoryRepository.findAll();}
 
     public void deleteCategoryById(long id) {
         if (!categoryRepository.existsById(id)) {
@@ -43,7 +39,6 @@ public class CategoryService {
         }
         categoryRepository.deleteById(id);
     }
-
 
     public Category findCategorytById(Long id) {
         Category category = categoryRepository.findById(id).orElse(null);
@@ -79,4 +74,4 @@ public class CategoryService {
             return categoryPageRequest;
         });
     }
-}
+ }
