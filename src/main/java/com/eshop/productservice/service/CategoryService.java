@@ -1,5 +1,6 @@
 package com.eshop.productservice.service;
 
+import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.model.Product;
 import com.eshop.productservice.request.category.CategoryPageRequest;
@@ -78,5 +79,21 @@ public class CategoryService {
 
             return categoryPageRequest;
         });
+    }
+
+
+
+    // Marouane Dbibih Category Functions
+
+    public Category getCategoryById(Long id) {
+        return categoryRepository.findById(id).orElse(null);
+    }
+
+    public CategoryDTO buildToDTO(Category category) {
+        return CategoryDTO.builder()
+                .id(category.getId())
+                .title(category.getName())
+                .description(category.getDescription())
+                .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.eshop.productservice.reponse.product;
+package com.eshop.productservice.response.product;
 
 import java.util.ArrayList;
 import java.util.List;

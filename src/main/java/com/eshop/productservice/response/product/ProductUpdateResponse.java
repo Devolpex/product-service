@@ -1,4 +1,4 @@
-package com.eshop.productservice.reponse.product;
+package com.eshop.productservice.response.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
