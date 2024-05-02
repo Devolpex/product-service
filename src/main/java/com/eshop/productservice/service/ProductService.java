@@ -9,11 +9,11 @@ import com.eshop.productservice.repository.ProductRepository;
 import com.eshop.productservice.request.product.ProductCreateRequest;
 
 import com.eshop.productservice.request.product.ProductUpdateRequest;
-import lombok.AllArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
