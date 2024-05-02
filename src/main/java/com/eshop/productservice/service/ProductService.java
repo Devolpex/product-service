@@ -13,12 +13,14 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -112,6 +114,13 @@ public class ProductService {
     public Page<ProductHomeDto> getLastAllProduct(Pageable pageable) {
         Page<Product> products = productRepository.findLastAllProducts(pageable);
         return products.map(this::convertToDtoHome);
+    }
+    public Page<ProductHomeDto> getLast6Product() {
+        List<Product> products = productRepository.findLast6Products();
+        List<ProductHomeDto> productHomeDtos = products.stream()
+                .map(this::convertToDtoHome)
+                .collect(Collectors.toList());
+        return new PageImpl<>(productHomeDtos);
     }
 
     public Optional<Product> updateProduct(Long id, ProductUpdateRequest request) {
