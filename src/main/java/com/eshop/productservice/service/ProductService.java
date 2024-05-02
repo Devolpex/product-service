@@ -61,6 +61,7 @@ public class ProductService {
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
+        product.setQuantity(request.getQuantity());
         product.setImage(request.getImage());
         product.setCreated_at(new Date());
         Optional<Category> category = categoryRepository.findById(request.getCategoryId());
@@ -74,6 +75,7 @@ public class ProductService {
         dto.setName(product.getName());
         dto.setDescription(product.getDescription());
         dto.setPrice(product.getPrice());
+        dto.setQuantity(product.getQuantity());
         dto.setImage(product.getImage());
         if (product.getCategory() != null) {
             dto.setCategoryName(product.getCategory().getName());
@@ -97,7 +99,10 @@ public class ProductService {
             product.setName(request.getName());
             product.setDescription(request.getDescription());
             product.setPrice(request.getPrice());
-            product.setImage(request.getImage());
+            if (request.getImage() != null) {
+                product.setImage(request.getImage()); 
+            }
+
             product.setQuantity(request.getQuantity());
             product.setUpdate_at(new Date());
 

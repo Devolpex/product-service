@@ -30,9 +30,7 @@ public class GoogleDriveService {
         return filePath.toString();
     }
 
-    public String uploadImageToDrive(File file) throws GeneralSecurityException, IOException {
-        // Res res = new Res();
-
+    public String uploadImageToDrive(File file, String mimeType) throws GeneralSecurityException, IOException {
         try {
             String folderId = "1fwcLM-mnRHahQqctRc4t5eNydewC7KFF";
 
@@ -41,23 +39,17 @@ public class GoogleDriveService {
 
             fileMetaData.setName(file.getName());
             fileMetaData.setParents(Collections.singletonList(folderId));
-            FileContent mediaContent = new FileContent("image/jpeg", file);
+            FileContent mediaContent = new FileContent(mimeType, file);
             com.google.api.services.drive.model.File uploadedFile = drive.files().create(fileMetaData, mediaContent)
                     .setFields("id").execute();
-            String imageUrl = "https://drive.google.com/uc?export=view&id=" + uploadedFile.getId();
+            String imageUrl = "https://drive.google.com/thumbnail?id=" + uploadedFile.getId() + "&sz=w1000";
             System.out.println("IMAGE URL: " + imageUrl);
             file.delete();
             return imageUrl;
-            // res.setStatus(200);
-            // res.setMessage("Image Successfully Uploaded To Drive");
-            // res.setUrl(imageUrl);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return e.getMessage();
-            // res.setStatus(500);
-            // res.setMessage(e.getMessage());
         }
-
     }
 
     private Drive createDriveService() throws GeneralSecurityException, IOException {

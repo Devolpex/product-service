@@ -1,5 +1,7 @@
 package com.eshop.productservice.controller;
 
+import com.eshop.productservice.dto.category.CategoryDTO;
+import com.eshop.productservice.dto.category.CategoryInfo;
 import com.eshop.productservice.dto.product.ProductDto;
 
 import jakarta.validation.Valid;
@@ -59,9 +61,11 @@ public class CategoryController {
     }
 
 
+
+
     @GetMapping("/all-categories")
-    public List<Category> getAllCategories() {
-        return categoryService.findAllCategories();
+    public List<CategoryInfo> getAllCategories() {
+        return categoryService.getAllCategoryInfo();
     }
 
     @PostMapping

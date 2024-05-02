@@ -1,7 +1,5 @@
 package com.eshop.productservice.controller;
 
-
-
 import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.enums.NotificationStatus;
@@ -21,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,7 +48,7 @@ public class ProductController {
     private final FileService fileService;
     private final GoogleDriveService googleDriveService;
 
-    // Search products by name 
+    // Search products by name
     @GetMapping("/search")
     public ResponseEntity<Page<ProductDto>> searchProducts(
             @RequestParam String search,
@@ -94,48 +95,59 @@ public class ProductController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ProductCreateResponse> createProduct(@RequestBody @Valid ProductCreateRequest request,
-                                                               BindingResult bindingResult) {
-        List<String> errors = new ArrayList<>();
+            BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            errors = bindingResult.getAllErrors().stream().map(error -> error.getDefaultMessage())
+            List<String> errors = bindingResult.getAllErrors().stream().map(error -> error.getDefaultMessage())
                     .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ProductCreateResponse.builder().errors(errors).build());
         }
-        if(productService.productExist(request.getName())){
+
+        List<String> errors = new ArrayList<>();
+
+        if (productService.productExist(request.getName())) {
             errors.add("Product already exists");
         }
+
         if (!categoryService.categoryExists(request.getCategoryId())) {
             errors.add("Category not found");
-            return ResponseEntity.badRequest().body(ProductCreateResponse.builder().errors(errors).build());
+        }
+
+        if (!fileService.checkIfImage(request.getImage())) {
+            errors.add("Invalid image file");
         }
 
         if (!errors.isEmpty()) {
-            return ResponseEntity.badRequest().body(ProductCreateResponse.builder().errors(errors).build());
-        }else{
-            if (!fileService.checkIfImage(request.getImage())){
-                return ResponseEntity.badRequest().body(ProductCreateResponse.builder().errors(Collections.singletonList("Invalid image file")).build());
-            }else{
-                try {
-                    File imageProduct =  fileService.convertToImage(request.getImage(),request.getName());
-                    String imageUrl = googleDriveService.uploadImageToDrive(imageProduct);
-                    request.setImage(imageUrl);
-                    productService.saveProduct(request);
-                } catch (Exception e) {
-                    return ResponseEntity.badRequest().body(ProductCreateResponse.builder().errors(Collections.singletonList("Failed to upload image")).build());
-                }
-            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ProductCreateResponse.builder().errors(errors).build());
         }
 
-        productService.saveProduct(request);
+        try {
+            File imageProduct = fileService.convertToImage(request.getImage(), request.getName());
+            String imageUrl = googleDriveService.uploadImageToDrive(imageProduct, getImageType(request.getImage()));
+            request.setImage(imageUrl);
+            productService.saveProduct(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(ProductCreateResponse.builder()
+                    .success("Product created successfully")
+                    .redirectTo("/products")
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ProductCreateResponse.builder()
+                    .errors(Collections.singletonList("Failed to create product check try again..!")).build());
+        }
 
-        return ResponseEntity.ok(ProductCreateResponse.builder()
-                .success("Success")
-                .build());
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductUpdateResponse> updateProduct(@PathVariable Long id,
-                                                               @RequestBody @Valid ProductUpdateRequest request, BindingResult bindingResult) {
+            @RequestBody @Valid ProductUpdateRequest request, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream().map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ProductUpdateResponse.builder().errors(errors).build());
+        }
+
         List<String> errors = new ArrayList<>();
         Product product = productService.findProductById(id).orElse(null);
 
@@ -144,26 +156,42 @@ public class ProductController {
                     .errors(Collections.singletonList("Product not found")).build());
         }
 
-        if (bindingResult.hasErrors()) {
-            errors = bindingResult.getAllErrors().stream().map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
+        if (!categoryService.categoryExists(request.getCategoryId())) {
+            errors.add("Category not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ProductUpdateResponse.builder()
+                    .errors(Collections.singletonList("Category not found")).build());
         }
 
-//        if (!productService.categoryExists(request.getCategoryId())) {
-//            errors.add("Category not found");
-//        }
+        if (this.isValidImageUrl(request.getImage())) {
+            productService.updateProduct(id, request);
+            return ResponseEntity.ok(ProductUpdateResponse.builder()
+            .success("Product updated successfully")
+            .redirectTo("/products")
+            .build());
+        } else {
+            if (!fileService.checkIfImage(request.getImage())) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ProductUpdateResponse.builder()
+                        .errors(Collections.singletonList("Invalid image file")).build());
+            }
 
-        if (!errors.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ProductUpdateResponse.builder().errors(errors).build());
+            try {
+                File imageProduct = fileService.convertToImage(request.getImage(), request.getName());
+                String imageUrl = googleDriveService.uploadImageToDrive(imageProduct,
+                        getImageType(request.getImage()));
+                request.setImage(imageUrl);
+                productService.updateProduct(id, request);
+                return ResponseEntity.status(HttpStatus.OK).body(ProductUpdateResponse.builder()
+                        .success("Product updated successfully")
+                        .redirectTo("/products")
+                        .build());
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ProductUpdateResponse.builder()
+                        .errors(Collections.singletonList("Failed to create product check try again..!")).build());
+            }
         }
 
-        productService.updateProduct(id, request);
-        return ResponseEntity.ok(ProductUpdateResponse.builder()
-                .success("Product updated successfully")
-                .redirectTo("/products")
-                .build());
+
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ProductDeleteResponse> deleteProduct(@PathVariable Long id) {
@@ -183,6 +211,25 @@ public class ProductController {
                 .redirectTo("/products")
                 .build());
     }
+
+    private String getImageType(String base64Image) {
+        String[] parts = base64Image.split(",");
+        String mimeType = parts[0].split(":")[1].split(";")[0];
+        return mimeType;
+    }
+
+    private static boolean isValidImageUrl(String imageUrl) {
+        // Regular expression pattern to match "https://drive.google.com/thumbnail?id="
+        // followed by any characters
+        String regex = "^https:\\/\\/drive\\.google\\.com\\/thumbnail\\?id=.*$";
+
+        // Create a Pattern object
+        Pattern pattern = Pattern.compile(regex);
+
+        // Create a Matcher object
+        Matcher matcher = pattern.matcher(imageUrl);
+
+        // Check if the image URL matches the pattern
+        return matcher.matches();
+    }
 }
-
-
