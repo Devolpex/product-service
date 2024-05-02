@@ -1,6 +1,7 @@
 package com.eshop.productservice.service;
 
 import com.eshop.productservice.dto.category.CategoryDTO;
+import com.eshop.productservice.dto.category.CategoryInfo;
 import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.model.Product;
 import com.eshop.productservice.request.category.CategoryPageRequest;
@@ -14,6 +15,7 @@ import com.eshop.productservice.model.Category;
 import com.eshop.productservice.repository.CategoryRepository;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,19 +23,19 @@ public class CategoryService {
     @Autowired
     private final CategoryRepository categoryRepository;
 
-
-    public void saveCategory(Category category){
+    public void saveCategory(Category category) {
         // Save Category data
         categoryRepository.save(category);
     }
 
-    public boolean categoryExists(long id){
+    public boolean categoryExists(long id) {
         return categoryRepository.existsById(id);
     }
 
-    public boolean nameExists(String name){
+    public boolean nameExists(String name) {
         return categoryRepository.existsByName(name);
     }
+
     public List<Category> findAllCategories() {
         return categoryRepository.findAll();
     }
@@ -44,7 +46,6 @@ public class CategoryService {
         }
         categoryRepository.deleteById(id);
     }
-
 
     public Category findCategorytById(Long id) {
         Category category = categoryRepository.findById(id).orElse(null);
@@ -62,7 +63,7 @@ public class CategoryService {
 
     public void updateCategory(Long id, Category category) {
         Category updated_category = category;
-                updated_category.setUpdate_at(new Date());
+        updated_category.setUpdate_at(new Date());
         categoryRepository.save(updated_category);
     }
 
@@ -81,8 +82,6 @@ public class CategoryService {
         });
     }
 
-
-
     // Marouane Dbibih Category Functions
 
     public Category getCategoryById(Long id) {
@@ -95,5 +94,11 @@ public class CategoryService {
                 .title(category.getName())
                 .description(category.getDescription())
                 .build();
+    }
+
+    public List<CategoryInfo> getAllCategoryInfo() {
+        return categoryRepository.findAll().stream()
+                .map(category -> new CategoryInfo(category.getId(), category.getName()))
+                .collect(Collectors.toList());
     }
 }

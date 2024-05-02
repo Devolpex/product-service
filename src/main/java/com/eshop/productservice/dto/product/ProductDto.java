@@ -16,10 +16,12 @@ public class ProductDto {
     private String name;
     private String description;
     private double price;
+    private int quantity;
     private String image;
+
     private Date createdAt;
     private Date updatedAt;
-    private int quantity;
+    
     private long categoryId;
     private String categoryName;
 }

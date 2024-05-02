@@ -24,16 +24,15 @@ public class Product implements Serializable {
     @NotBlank(message = "Name is mandatory")
     private String name;
     private String description;
-    private double Price;
-    private String Image;
+    private double price;
+    private int quantity;
+    private String image;
+
     private Date created_at;
     @Nullable
     private Date update_at;
 
-    @Transient
-    private int quantity = 1;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;
 }

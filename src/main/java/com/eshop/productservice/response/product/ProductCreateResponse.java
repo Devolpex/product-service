@@ -15,4 +15,5 @@ import java.util.List;
 public class ProductCreateResponse {
     private String success;
     private List<String> errors = new ArrayList<>();
+    private String redirectTo;
 }
