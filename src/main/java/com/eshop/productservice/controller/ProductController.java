@@ -1,7 +1,7 @@
 package com.eshop.productservice.controller;
 
 import com.eshop.productservice.Response.product.ProductHomeResponse;
-import com.eshop.productservice.Response.product.ProductPageResponse;
+import com.eshop.productservice.response.product.ProductPageResponse;
 import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.dto.product.ProductHomeDto;
@@ -76,12 +76,12 @@ public class ProductController {
     }
 
     //Get last 6 Product HomePage
-    @GetMapping("/Last6")
+    @GetMapping("/home")
     public List<ProductHomeDto> getLast6Products() {
         return productService.getLast6Product();
     }
 
-    @GetMapping("/Home")
+    @GetMapping("/client-side-pagination")
     public ResponseEntity<ProductHomeResponse> getProductHomePagination(@RequestParam(defaultValue = "1") int page) {
         int size = 6;
         Pageable pageable = PageRequest.of(page - 1, size);
