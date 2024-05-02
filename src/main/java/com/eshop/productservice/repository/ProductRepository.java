@@ -19,13 +19,16 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findAll(Pageable pageable);
 
+
     @Query("SELECT p FROM Product p JOIN p.category c WHERE " +
             "LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<Product> findByProductNameOrCategoryName(@Param("search") String search, Pageable pageable);
 
     Product findProductById(Long id);
-
+//get last six  products
+    @Query("SELECT p FROM Product p ORDER BY p.id DESC")
+    Page<Product> findLastAllProducts(Pageable pageable);
 
 
 }

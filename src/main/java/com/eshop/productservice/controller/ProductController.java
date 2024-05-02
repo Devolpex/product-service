@@ -1,14 +1,17 @@
 package com.eshop.productservice.controller;
 
+import com.eshop.productservice.Response.product.ProductHomeResponse;
+import com.eshop.productservice.Response.product.ProductPageResponse;
 import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.dto.product.ProductHomeDto;
 import com.eshop.productservice.enums.NotificationStatus;
 import com.eshop.productservice.file.FileService;
 import com.eshop.productservice.file.GoogleDriveService;
 import com.eshop.productservice.request.product.ProductUpdateRequest;
 import com.eshop.productservice.response.product.ProductCreateResponse;
 import com.eshop.productservice.response.product.ProductDeleteResponse;
-import com.eshop.productservice.response.product.ProductPageResponse;
+
 import com.eshop.productservice.response.product.ProductResponse;
 import com.eshop.productservice.response.product.ProductUpdateResponse;
 import com.eshop.productservice.response.settings.Notification;
@@ -72,6 +75,20 @@ public class ProductController {
                 .build());
     }
 
+    //Get last 6 Product HomePage
+    @GetMapping("/Home")
+    public ResponseEntity<ProductHomeResponse> getProductHomePagination(@RequestParam(defaultValue = "1") int page) {
+        int size = 6;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ProductHomeDto> productPage = productService.getLastAllProduct(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ProductHomeResponse.builder()
+                .products(productPage.getContent())
+                .currentPage(productPage.getNumber() + 1)
+                .totalPages(productPage.getTotalPages())
+                .build());
+    }
+
+
     // Get product by id
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id) {
@@ -113,28 +130,33 @@ public class ProductController {
             errors.add("Category not found");
         }
 
-        if (!fileService.checkIfImage(request.getImage())) {
-            errors.add("Invalid image file");
-        }
+//        if (!fileService.checkIfImage(request.getImage())) {
+//            errors.add("Invalid image file");
+//        }
 
         if (!errors.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(ProductCreateResponse.builder().errors(errors).build());
         }
 
-        try {
-            File imageProduct = fileService.convertToImage(request.getImage(), request.getName());
-            String imageUrl = googleDriveService.uploadImageToDrive(imageProduct, getImageType(request.getImage()));
-            request.setImage(imageUrl);
-            productService.saveProduct(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(ProductCreateResponse.builder()
-                    .success("Product created successfully")
-                    .redirectTo("/products")
-                    .build());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ProductCreateResponse.builder()
-                    .errors(Collections.singletonList("Failed to create product check try again..!")).build());
-        }
+//        try {
+//            File imageProduct = fileService.convertToImage(request.getImage(), request.getName());
+//            String imageUrl = googleDriveService.uploadImageToDrive(imageProduct, getImageType(request.getImage()));
+//            request.setImage(imageUrl);
+//            productService.saveProduct(request);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(ProductCreateResponse.builder()
+//                    .success("Product created successfully")
+//                    .redirectTo("/products")
+//                    .build());
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ProductCreateResponse.builder()
+//                    .errors(Collections.singletonList("Failed to create product check try again..!")).build());
+//        }
+        productService.saveProduct(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProductCreateResponse.builder()
+                .success("Product created successfully")
+                .redirectTo("/products")
+                .build());
 
     }
 

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.eshop.productservice.Exception.CategoryNotFoundException;
 import com.eshop.productservice.request.category.*;
-import com.eshop.productservice.response.product.ProductPageResponse;
+import com.eshop.productservice.Response.product.*;
 import com.eshop.productservice.Response.category.*;
 import com.eshop.productservice.model.Category;
 import com.eshop.productservice.service.CategoryService;
