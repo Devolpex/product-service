@@ -1,8 +1,6 @@
 package com.eshop.productservice.controller;
 
-import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.category.CategoryInfo;
-import com.eshop.productservice.dto.product.ProductDto;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import com.eshop.productservice.Exception.CategoryNotFoundException;
 import com.eshop.productservice.request.category.*;
+
 import com.eshop.productservice.Response.product.*;
+
+
 import com.eshop.productservice.Response.category.*;
 import com.eshop.productservice.model.Category;
 import com.eshop.productservice.service.CategoryService;
@@ -43,6 +44,18 @@ public class CategoryController {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<CategoryPageRequest> categoryPage = categoryService.getCategoryByPagination(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(CategoryPageResponse.builder()
+                .category(categoryPage.getContent())
+                .currentPage(categoryPage.getNumber() + 1)
+                .totalPages(categoryPage.getTotalPages())
+                .build());
+    }
+
+    @GetMapping("/categories-pagination-client")
+    public ResponseEntity<CategoryClientPageResponse> getCategoryByPaginationFront(@RequestParam(defaultValue = "1") int page) {
+        int size = 12;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<CategoryClientPageRequest> categoryPage = categoryService.getCategoryByPaginationFront(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(CategoryClientPageResponse.builder()
                 .category(categoryPage.getContent())
                 .currentPage(categoryPage.getNumber() + 1)
                 .totalPages(categoryPage.getTotalPages())

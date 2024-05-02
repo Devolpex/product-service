@@ -4,6 +4,7 @@ import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.category.CategoryInfo;
 import com.eshop.productservice.dto.product.ProductDto;
 import com.eshop.productservice.model.Product;
+import com.eshop.productservice.request.category.CategoryClientPageRequest;
 import com.eshop.productservice.request.category.CategoryPageRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,6 +79,18 @@ public class CategoryService {
             categoryPageRequest.setDescription(category.getDescription());
             // Map other fields as needed
 
+            return categoryPageRequest;
+        });
+    }
+
+    public Page<CategoryClientPageRequest> getCategoryByPaginationFront(Pageable pageable) {
+        Page<Category> categoryPage = categoryRepository.findAll(pageable);
+
+        return categoryPage.map(category -> {
+            CategoryClientPageRequest categoryPageRequest = new CategoryClientPageRequest();
+            // Map fields from Category to CategoryPageRequest
+            categoryPageRequest.setId(category.getId());
+            categoryPageRequest.setName(category.getName());
             return categoryPageRequest;
         });
     }
