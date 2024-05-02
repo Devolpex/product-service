@@ -9,11 +9,11 @@ import com.eshop.productservice.repository.ProductRepository;
 import com.eshop.productservice.request.product.ProductCreateRequest;
 
 import com.eshop.productservice.request.product.ProductUpdateRequest;
-import lombok.AllArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -109,6 +109,10 @@ public class ProductService {
     public Page<ProductDto> getProductByPagination(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(this::convertToDto);
+    }
+    public Page<ProductHomeDto> getProductsByCategory(Long categoryId, Pageable pageable) {
+        Page<Product> products = productRepository.findByCategoryNameOrderByCreatedAtDesc(categoryId, pageable);
+        return products.map(this::convertToDtoHome);
     }
 
     public Page<ProductHomeDto> getLastAllProduct(Pageable pageable) {
