@@ -24,6 +24,14 @@ public class Product implements Serializable {
     @NotBlank(message = "Name is mandatory")
     private String name;
     private String description;
+
+    @Transient
+    public String getShortDescription() {
+        if (description.length() > 100) {
+            return description.substring(0, 100);
+        }
+        return description;
+    }
     private double price;
     private int quantity;
     private String image;

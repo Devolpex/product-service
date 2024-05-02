@@ -1,14 +1,17 @@
 package com.eshop.productservice.controller;
 
+import com.eshop.productservice.Response.product.ProductHomeResponse;
+import com.eshop.productservice.Response.product.ProductPageResponse;
 import com.eshop.productservice.dto.category.CategoryDTO;
 import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.dto.product.ProductHomeDto;
 import com.eshop.productservice.enums.NotificationStatus;
 import com.eshop.productservice.file.FileService;
 import com.eshop.productservice.file.GoogleDriveService;
 import com.eshop.productservice.request.product.ProductUpdateRequest;
 import com.eshop.productservice.response.product.ProductCreateResponse;
 import com.eshop.productservice.response.product.ProductDeleteResponse;
-import com.eshop.productservice.response.product.ProductPageResponse;
+
 import com.eshop.productservice.response.product.ProductResponse;
 import com.eshop.productservice.response.product.ProductUpdateResponse;
 import com.eshop.productservice.response.settings.Notification;
@@ -71,6 +74,26 @@ public class ProductController {
                 .totalPages(productPage.getTotalPages())
                 .build());
     }
+
+    //Get last 6 Product HomePage
+    @GetMapping("/Last6")
+    public Page<ProductHomeDto> getLast6Products() {
+        return productService.getLast6Product();
+    }
+
+    @GetMapping("/Home")
+    public ResponseEntity<ProductHomeResponse> getProductHomePagination(@RequestParam(defaultValue = "1") int page) {
+        int size = 6;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ProductHomeDto> productPage = productService.getLastAllProduct(pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ProductHomeResponse.builder()
+                .products(productPage.getContent())
+                .currentPage(productPage.getNumber() + 1)
+                .totalPages(productPage.getTotalPages())
+                .build());
+    }
+
+
 
     // Get product by id
     @GetMapping("/{id}")

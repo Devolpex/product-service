@@ -1,6 +1,7 @@
 package com.eshop.productservice.service;
 
 import com.eshop.productservice.dto.product.ProductDto;
+import com.eshop.productservice.dto.product.ProductHomeDto;
 import com.eshop.productservice.model.Category;
 import com.eshop.productservice.model.Product;
 import com.eshop.productservice.repository.CategoryRepository;
@@ -12,12 +13,14 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -82,6 +85,20 @@ public class ProductService {
         }
         return dto;
     }
+    private ProductHomeDto convertToDtoHome(Product product) {
+        ProductHomeDto dto = new ProductHomeDto();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getShortDescription());
+        dto.setPrice(product.getPrice());
+
+        dto.setImage(product.getImage());
+        if (product.getCategory() != null) {
+            dto.setCategoryName(product.getCategory().getName());
+            dto.setCategoryId(product.getCategory().getId());
+        }
+        return dto;
+    }
     // search product by name
 
     public Page<ProductDto> searchProducts(String search, Pageable pageable) {
@@ -92,6 +109,18 @@ public class ProductService {
     public Page<ProductDto> getProductByPagination(Pageable pageable) {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(this::convertToDto);
+    }
+
+    public Page<ProductHomeDto> getLastAllProduct(Pageable pageable) {
+        Page<Product> products = productRepository.findLastAllProducts(pageable);
+        return products.map(this::convertToDtoHome);
+    }
+    public Page<ProductHomeDto> getLast6Product() {
+        List<Product> products = productRepository.findLast6Products();
+        List<ProductHomeDto> productHomeDtos = products.stream()
+                .map(this::convertToDtoHome)
+                .collect(Collectors.toList());
+        return new PageImpl<>(productHomeDtos);
     }
 
     public Optional<Product> updateProduct(Long id, ProductUpdateRequest request) {
