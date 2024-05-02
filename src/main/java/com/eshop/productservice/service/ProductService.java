@@ -115,12 +115,12 @@ public class ProductService {
         Page<Product> products = productRepository.findLastAllProducts(pageable);
         return products.map(this::convertToDtoHome);
     }
-    public Page<ProductHomeDto> getLast6Product() {
+    public List<ProductHomeDto> getLast6Product() {
         List<Product> products = productRepository.findLast6Products();
-        List<ProductHomeDto> productHomeDtos = products.stream()
+        return products.stream()
                 .map(this::convertToDtoHome)
                 .collect(Collectors.toList());
-        return new PageImpl<>(productHomeDtos);
+
     }
 
     public Optional<Product> updateProduct(Long id, ProductUpdateRequest request) {

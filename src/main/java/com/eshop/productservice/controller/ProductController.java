@@ -77,7 +77,7 @@ public class ProductController {
 
     //Get last 6 Product HomePage
     @GetMapping("/Last6")
-    public Page<ProductHomeDto> getLast6Products() {
+    public List<ProductHomeDto> getLast6Products() {
         return productService.getLast6Product();
     }
 
