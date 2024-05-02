@@ -92,6 +92,21 @@ public class ProductController {
                 .totalPages(productPage.getTotalPages())
                 .build());
     }
+    //Get ProductByCategory Order by LastAdd
+    @GetMapping("/categoryId/{categoryId}")
+    public ResponseEntity<ProductHomeResponse> getProductsByCategory(
+            @PathVariable("categoryId") Long categoryId,
+            @RequestParam(defaultValue = "1") int page) {
+        int size = 6;
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<ProductHomeDto> productPage = productService.getProductsByCategory(categoryId, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(ProductHomeResponse.builder()
+                .products(productPage.getContent())
+                .currentPage(productPage.getNumber() + 1)
+                .totalPages(productPage.getTotalPages())
+                .build());
+    }
+
 
 
 

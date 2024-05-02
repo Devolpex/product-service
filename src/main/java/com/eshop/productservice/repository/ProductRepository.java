@@ -33,5 +33,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query(value = "SELECT * FROM products ORDER BY id DESC LIMIT 6", nativeQuery = true)
     List<Product> findLast6Products();
 
-
+    @Query("SELECT p FROM Product  p JOIN p.category c WHERE c.id = :categoryId ORDER BY p.created_at DESC")
+    Page<Product> findByCategoryNameOrderByCreatedAtDesc(@Param("categoryId") Long categoryId, Pageable pageable);
 }

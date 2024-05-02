@@ -110,6 +110,10 @@ public class ProductService {
         Page<Product> products = productRepository.findAll(pageable);
         return products.map(this::convertToDto);
     }
+    public Page<ProductHomeDto> getProductsByCategory(Long categoryId, Pageable pageable) {
+        Page<Product> products = productRepository.findByCategoryNameOrderByCreatedAtDesc(categoryId, pageable);
+        return products.map(this::convertToDtoHome);
+    }
 
     public Page<ProductHomeDto> getLastAllProduct(Pageable pageable) {
         Page<Product> products = productRepository.findLastAllProducts(pageable);
