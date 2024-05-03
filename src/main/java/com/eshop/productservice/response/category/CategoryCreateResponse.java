@@ -1,4 +1,4 @@
-package com.eshop.productservice.Response.category;
+package com.eshop.productservice.response.category;
 
 import java.util.ArrayList;
 import java.util.List;
