@@ -22,3 +22,6 @@ spring:
       ddl-auto: update
     database: mysql
     database-platform: org.hibernate.dialect.MySQLDialect
+
+
+  
